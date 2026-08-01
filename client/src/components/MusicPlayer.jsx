@@ -10,10 +10,13 @@ import {
   Maximize2,
   ChevronDown,
   ChevronUp,
+  Mic2,
+  FileText,
 } from 'lucide-react';
 import ReactPlayer from 'react-player';
 import { usePlayerStore } from '../store/playerStore';
 import { searchYouTubeVideo } from '../api/youtube';
+import { getLyricsForTrack } from '../data/lyricsData';
 
 const MusicPlayer = () => {
   const {
@@ -34,7 +37,9 @@ const MusicPlayer = () => {
   const [played, setPlayed] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showLyrics, setShowLyrics] = useState(false);
   const playerRef = useRef(null);
+  const lyricsContainerRef = useRef(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -97,9 +102,32 @@ const MusicPlayer = () => {
     }
   };
 
+  const handleLyricClick = (targetTime) => {
+    if (duration > 0 && playerRef.current) {
+      const seekRatio = targetTime / duration;
+      setPlayed(seekRatio);
+      playerRef.current.seekTo(seekRatio);
+    }
+  };
+
   const handleVolumeChange = (e) => {
     setVolume(parseFloat(e.target.value));
   };
+
+  // Get active track lyrics
+  const lyricsList = getLyricsForTrack(
+    currentTrack?.name || '',
+    currentTrack?.artists?.[0]?.name || ''
+  );
+  const currentTimeSec = (duration || 0) * (played || 0);
+
+  // Compute active lyric index
+  let activeLyricIdx = 0;
+  for (let i = 0; i < lyricsList.length; i++) {
+    if (currentTimeSec >= lyricsList[i].time) {
+      activeLyricIdx = i;
+    }
+  }
 
   const playerBg =
     theme === 'light'
@@ -145,11 +173,11 @@ const MusicPlayer = () => {
         </div>
       )}
 
-      {/* FULL-SCREEN / EXPANDED NOW PLAYING VIEW */}
+      {/* FULL-SCREEN / EXPANDED NOW PLAYING VIEW (WITH LIVE LYRICS DISPLAY) */}
       {isExpanded && (
-        <div className="fixed inset-0 z-[100] bg-gradient-to-b from-[#065f46] via-[#09090b] to-[#040405] text-white flex flex-col justify-between p-6 md:p-12 animate-fade-in-up backdrop-blur-3xl overflow-y-auto">
-          {/* Header Drag Down Control */}
-          <div className="flex items-center justify-between w-full max-w-4xl mx-auto">
+        <div className="fixed inset-0 z-[100] bg-gradient-to-b from-[#065f46] via-[#09090b] to-[#040405] text-white flex flex-col justify-between p-6 md:p-10 animate-fade-in-up backdrop-blur-3xl overflow-y-auto">
+          {/* Header Controls */}
+          <div className="flex items-center justify-between w-full max-w-5xl mx-auto">
             <button
               onClick={() => setIsExpanded(false)}
               className="p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 transition-all hover:scale-110 flex items-center gap-1 font-bold text-xs"
@@ -166,54 +194,100 @@ const MusicPlayer = () => {
                 {currentTrack.album?.name || 'Bollywood Hits'}
               </p>
             </div>
-            <button
-              onClick={() => toggleLikeTrack(currentTrack)}
-              className="p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 transition-all hover:scale-110"
-            >
-              <Heart
-                size={22}
-                fill={isLiked(currentTrack?.id) ? '#1db954' : 'none'}
-                className={isLiked(currentTrack?.id) ? 'text-spotify-base animate-pulse' : 'text-white'}
-              />
-            </button>
+
+            <div className="flex items-center gap-2">
+              {/* Lyrics View Toggle Button */}
+              <button
+                onClick={() => setShowLyrics(!showLyrics)}
+                className={`p-2.5 sm:p-3 rounded-full transition-all hover:scale-110 flex items-center gap-1.5 text-xs font-bold ${
+                  showLyrics ? 'bg-spotify-base text-black font-extrabold shadow-lg' : 'bg-white/10 hover:bg-white/20 text-white'
+                }`}
+                title="Toggle Live Lyrics"
+              >
+                <Mic2 size={18} />
+                <span className="hidden sm:inline">Lyrics</span>
+              </button>
+              <button
+                onClick={() => toggleLikeTrack(currentTrack)}
+                className="p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 transition-all hover:scale-110"
+              >
+                <Heart
+                  size={22}
+                  fill={isLiked(currentTrack?.id) ? '#1db954' : 'none'}
+                  className={isLiked(currentTrack?.id) ? 'text-spotify-base animate-pulse' : 'text-white'}
+                />
+              </button>
+            </div>
           </div>
 
-          {/* Large Spinning Vinyl Art Center */}
-          <div className="flex flex-col items-center justify-center my-4 sm:my-6 max-w-4xl mx-auto w-full">
-            <div className="relative mb-6 sm:mb-8">
-              <div
-                className={`w-52 h-52 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-full shadow-2xl overflow-hidden relative ring-8 ring-spotify-base/30 transition-transform ${
-                  isPlaying ? 'animate-spin-slow ring-spotify-base/60' : 'ring-white/10'
-                }`}
-              >
-                <img src={albumArt} alt={currentTrack.name} className="w-full h-full object-cover rounded-full" />
-                {/* Vinyl Center Spindle */}
-                <div className="absolute inset-0 m-auto w-10 h-10 sm:w-12 sm:h-12 bg-black rounded-full border-4 border-white/40 shadow-2xl flex items-center justify-center pointer-events-none">
-                  <div className="w-3 h-3 sm:w-4 sm:h-4 bg-spotify-base rounded-full" />
+          {/* Main Center Area: Vinyl Disc OR Live Synchronized Karaoke Lyrics */}
+          {!showLyrics ? (
+            <div className="flex flex-col items-center justify-center my-4 sm:my-6 max-w-4xl mx-auto w-full">
+              <div className="relative mb-6 sm:mb-8">
+                <div
+                  className={`w-52 h-52 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-full shadow-2xl overflow-hidden relative ring-8 ring-spotify-base/30 transition-transform ${
+                    isPlaying ? 'animate-spin-slow ring-spotify-base/60' : 'ring-white/10'
+                  }`}
+                >
+                  <img src={albumArt} alt={currentTrack.name} className="w-full h-full object-cover rounded-full" />
+                  {/* Vinyl Center Spindle */}
+                  <div className="absolute inset-0 m-auto w-10 h-10 sm:w-12 sm:h-12 bg-black rounded-full border-4 border-white/40 shadow-2xl flex items-center justify-center pointer-events-none">
+                    <div className="w-3 h-3 sm:w-4 sm:h-4 bg-spotify-base rounded-full" />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Song Title & Equalizer */}
-            <div className="text-center max-w-lg px-4">
-              <div className="flex items-center justify-center gap-2 sm:gap-3">
-                <h1 className="text-xl sm:text-4xl font-black tracking-tight text-white line-clamp-1">
-                  {currentTrack.name}
-                </h1>
-                {isPlaying && (
-                  <div className="flex items-end gap-1 h-5 sm:h-6 flex-shrink-0">
-                    <span className="w-1 bg-spotify-base rounded-full equalizer-bar-1" />
-                    <span className="w-1 bg-spotify-base rounded-full equalizer-bar-2" />
-                    <span className="w-1 bg-spotify-base rounded-full equalizer-bar-3" />
-                    <span className="w-1 bg-spotify-base rounded-full equalizer-bar-4" />
-                  </div>
-                )}
+              {/* Song Title & Equalizer */}
+              <div className="text-center max-w-lg px-4">
+                <div className="flex items-center justify-center gap-2 sm:gap-3">
+                  <h1 className="text-xl sm:text-4xl font-black tracking-tight text-white line-clamp-1">
+                    {currentTrack.name}
+                  </h1>
+                  {isPlaying && (
+                    <div className="flex items-end gap-1 h-5 sm:h-6 flex-shrink-0">
+                      <span className="w-1 bg-spotify-base rounded-full equalizer-bar-1" />
+                      <span className="w-1 bg-spotify-base rounded-full equalizer-bar-2" />
+                      <span className="w-1 bg-spotify-base rounded-full equalizer-bar-3" />
+                      <span className="w-1 bg-spotify-base rounded-full equalizer-bar-4" />
+                    </div>
+                  )}
+                </div>
+                <p className="text-sm sm:text-lg text-spotify-base font-extrabold mt-1 truncate">
+                  {currentTrack.artists?.map((a) => a.name).join(', ')}
+                </p>
               </div>
-              <p className="text-sm sm:text-lg text-spotify-base font-extrabold mt-1 truncate">
-                {currentTrack.artists?.map((a) => a.name).join(', ')}
-              </p>
             </div>
-          </div>
+          ) : (
+            /* LIVE KARAOKE LYRICS PANEL */
+            <div className="my-6 max-w-3xl mx-auto w-full flex-1 flex flex-col items-center justify-center px-4 animate-fade-in-up">
+              <div className="flex items-center gap-2 mb-4 text-spotify-base font-black text-xs uppercase tracking-widest">
+                <Mic2 size={16} />
+                <span>Live Karaoke Lyrics</span>
+              </div>
+
+              <div
+                ref={lyricsContainerRef}
+                className="w-full max-h-[380px] overflow-y-auto custom-scrollbar flex flex-col items-center gap-6 text-center py-6 px-4 bg-black/30 rounded-3xl backdrop-blur-md border border-white/10 shadow-2xl"
+              >
+                {lyricsList.map((line, idx) => {
+                  const isActive = idx === activeLyricIdx;
+                  return (
+                    <p
+                      key={idx}
+                      onClick={() => handleLyricClick(line.time)}
+                      className={`cursor-pointer transition-all duration-300 ${
+                        isActive
+                          ? 'text-spotify-base font-black text-xl sm:text-3xl scale-105 drop-shadow-[0_0_12px_rgba(29,185,84,0.8)]'
+                          : 'text-gray-400/70 hover:text-white font-bold text-base sm:text-xl hover:scale-105'
+                      }`}
+                    >
+                      {line.text}
+                    </p>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Timeline & Controls */}
           <div className="w-full max-w-3xl mx-auto flex flex-col gap-4 sm:gap-6">
@@ -423,8 +497,22 @@ const MusicPlayer = () => {
           </div>
         </div>
 
-        {/* Right: Volume & Expand Full Screen Button (Desktop) */}
-        <div className="hidden md:flex items-center justify-end gap-4 w-1/3 min-w-[180px]">
+        {/* Right: Volume, Lyrics Toggle & Expand Button (Desktop) */}
+        <div className="hidden md:flex items-center justify-end gap-3 w-1/3 min-w-[180px]">
+          {/* Quick Lyrics Toggle Button in Player Bar */}
+          <button
+            onClick={() => {
+              setIsExpanded(true);
+              setShowLyrics(true);
+            }}
+            className={`p-1.5 rounded-full transition-all hover:scale-110 ${
+              showLyrics ? 'text-spotify-base bg-white/10' : `${controlBtnColor}`
+            }`}
+            title="View Live Lyrics"
+          >
+            <Mic2 size={16} />
+          </button>
+
           <div className="flex items-center gap-2 w-20 group relative">
             <button className={`${controlBtnColor} transition-colors`} title="Volume">
               <Volume2 size={16} />
