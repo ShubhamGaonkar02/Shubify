@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { usePlayerStore } from '../store/playerStore';
-import { Play, Pause, Trash2, Plus, Music, Search as SearchIcon, Heart, Clock } from 'lucide-react';
+import { Play, Pause, Trash2, Plus, Music, Search as SearchIcon, Heart, Clock, Share2, Check } from 'lucide-react';
 import { searchSpotify } from '../api/spotify';
 
 const presetMetadata = {
@@ -71,6 +71,7 @@ const PlaylistView = () => {
 
   const [tracks, setTracks] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [meta, setMeta] = useState({
     title: '',
     desc: '',
@@ -139,6 +140,32 @@ const PlaylistView = () => {
     playTrackList(tracks, index);
   };
 
+  const handleSharePlaylist = async () => {
+    const shareUrl = window.location.href;
+    const shareData = {
+      title: `${meta.title} on Shubify`,
+      text: `Listen to ${meta.title} on Shubify Ad-Free Music Player!`,
+      url: shareUrl,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch (err) {
+        // Fallback to clipboard copy
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    } catch (err) {
+      // Fallback
+    }
+  };
+
   const handleSearchTracks = async (e) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
@@ -174,7 +201,15 @@ const PlaylistView = () => {
   const activeRow = theme === 'light' ? 'bg-emerald-100/90 border border-[#047857]/40' : 'bg-white/10';
 
   return (
-    <div className="flex-1 overflow-y-auto pb-32 min-h-full">
+    <div className="flex-1 overflow-y-auto pb-32 min-h-full relative">
+      {/* Toast Notification */}
+      {copied && (
+        <div className="fixed top-20 right-8 z-50 bg-spotify-base text-black font-extrabold px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-2 animate-bounce">
+          <Check size={18} />
+          <span>Playlist link copied to clipboard! 🔗</span>
+        </div>
+      )}
+
       {/* Hero Banner */}
       <div className={`${headerBg} p-8 flex flex-col md:flex-row items-end gap-6 shadow-sm transition-all`}>
         <div className="w-52 h-52 bg-[#282828] rounded-xl shadow-2xl overflow-hidden flex-shrink-0 relative group ring-4 ring-black/10">
@@ -218,7 +253,7 @@ const PlaylistView = () => {
 
       {/* Action Bar */}
       <div className="p-8 pb-4 flex items-center justify-between">
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4">
           {tracks.length > 0 && (
             <button
               onClick={handlePlayAll}
@@ -232,6 +267,22 @@ const PlaylistView = () => {
               )}
             </button>
           )}
+
+          {/* Share Playlist Button */}
+          <button
+            onClick={handleSharePlaylist}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-black transition-all hover:scale-105 shadow-md border ${
+              copied
+                ? 'bg-spotify-base text-black border-spotify-base'
+                : theme === 'light'
+                ? 'bg-slate-100 hover:bg-slate-200 text-slate-900 border-slate-300'
+                : 'bg-white/10 hover:bg-white/20 text-white border-white/10'
+            }`}
+            title="Share Playlist"
+          >
+            {copied ? <Check size={16} /> : <Share2 size={16} />}
+            <span>{copied ? 'Link Copied!' : 'Share Playlist'}</span>
+          </button>
         </div>
 
         {meta.isCustom && (
