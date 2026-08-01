@@ -27,7 +27,7 @@ const Sidebar = () => {
   return (
     <>
       <div
-        className={`w-80 h-full flex flex-col select-none p-2 gap-2 transition-colors ${
+        className={`hidden md:flex w-80 h-full flex-col select-none p-2 gap-2 transition-colors ${
           theme === 'light' ? 'bg-slate-100' : 'bg-black'
         }`}
       >

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, User, Sun, Moon, LogOut, ShieldCheck, ChevronDown } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Sun, Moon, LogOut, ShieldCheck, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { usePlayerStore } from '../store/playerStore';
 import { useAuthStore } from '../store/authStore';
@@ -33,43 +33,55 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`h-16 flex items-center justify-between px-8 sticky top-0 z-50 backdrop-blur-md transition-colors ${
+      className={`h-16 flex items-center justify-between px-4 md:px-8 sticky top-0 z-40 backdrop-blur-md transition-colors ${
         theme === 'light'
           ? 'bg-white/95 border-b border-slate-200 text-slate-900 shadow-sm'
           : 'bg-[#121212]/90 text-white'
       }`}
     >
-      {/* Navigation History Controls */}
-      <div className="flex gap-4">
-        <button
-          onClick={() => navigate(-1)}
-          className={`rounded-full p-1.5 transition-colors ${
-            theme === 'light'
-              ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200'
-              : 'bg-black/40 text-gray-400 hover:text-white'
-          }`}
-          title="Go back"
+      {/* Mobile Brand Logo / Left Nav History */}
+      <div className="flex items-center gap-3">
+        {/* Mobile Shubify Logo (Hidden on desktop since desktop has Sidebar) */}
+        <div
+          onClick={() => navigate('/')}
+          className="flex md:hidden items-center gap-2 cursor-pointer"
         >
-          <ChevronLeft size={22} />
-        </button>
-        <button
-          onClick={() => navigate(1)}
-          className={`rounded-full p-1.5 transition-colors ${
-            theme === 'light'
-              ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200'
-              : 'bg-black/40 text-gray-400 hover:text-white'
-          }`}
-          title="Go forward"
-        >
-          <ChevronRight size={22} />
-        </button>
+          <img src="/logo.png" alt="Shubify" className="w-8 h-8 object-contain drop-shadow" />
+          <span className="font-black text-lg tracking-tight animate-wave-text">Shubify</span>
+        </div>
+
+        {/* Navigation History Controls */}
+        <div className="hidden sm:flex gap-2">
+          <button
+            onClick={() => navigate(-1)}
+            className={`rounded-full p-1.5 transition-colors ${
+              theme === 'light'
+                ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200'
+                : 'bg-black/40 text-gray-400 hover:text-white'
+            }`}
+            title="Go back"
+          >
+            <ChevronLeft size={20} />
+          </button>
+          <button
+            onClick={() => navigate(1)}
+            className={`rounded-full p-1.5 transition-colors ${
+              theme === 'light'
+                ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200'
+                : 'bg-black/40 text-gray-400 hover:text-white'
+            }`}
+            title="Go forward"
+          >
+            <ChevronRight size={20} />
+          </button>
+        </div>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
         {/* Light / Dark Mode Toggle Button */}
         <button
           onClick={toggleTheme}
-          className={`p-2 rounded-full flex items-center gap-2 text-xs font-black transition-all shadow-sm ${
+          className={`p-2 rounded-full flex items-center gap-1.5 text-xs font-black transition-all shadow-sm ${
             theme === 'light'
               ? 'bg-slate-100 text-slate-900 hover:bg-slate-200 border border-slate-300'
               : 'bg-[#282828] text-yellow-400 hover:bg-[#383838] border border-white/10'
@@ -77,11 +89,11 @@ const Navbar = () => {
           title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
         >
           {theme === 'light' ? (
-            <Moon size={18} className="fill-current text-slate-900" />
+            <Moon size={16} className="fill-current text-slate-900" />
           ) : (
-            <Sun size={18} className="fill-current text-yellow-400" />
+            <Sun size={16} className="fill-current text-yellow-400" />
           )}
-          <span className="hidden sm:inline">{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
+          <span className="hidden md:inline">{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
         </button>
 
         {/* User Profile & Logout Dropdown */}
@@ -89,7 +101,7 @@ const Navbar = () => {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className={`flex items-center gap-2.5 p-1.5 pr-3 rounded-full transition-all shadow-sm border ${
+              className={`flex items-center gap-2 p-1 pr-2.5 rounded-full transition-all shadow-sm border ${
                 theme === 'light'
                   ? 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-900'
                   : 'bg-black/80 hover:bg-[#282828] border-white/10 text-white'
@@ -101,7 +113,7 @@ const Navbar = () => {
                 alt={user.displayName || 'User Avatar'}
                 className="w-7 h-7 rounded-full object-cover shadow"
               />
-              <span className="text-xs font-extrabold max-w-[120px] truncate hidden sm:inline">
+              <span className="text-xs font-extrabold max-w-[100px] truncate hidden sm:inline">
                 {user.displayName || 'Account'}
               </span>
               <ChevronDown size={14} className="text-gray-400" />
@@ -138,10 +150,10 @@ const Navbar = () => {
             )}
           </div>
         ) : (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => navigate('/login')}
-              className={`font-bold text-sm transition-colors ${
+              className={`font-bold text-xs sm:text-sm transition-colors ${
                 theme === 'light' ? 'text-slate-700 hover:text-spotify-base' : 'text-gray-400 hover:text-spotify-base'
               }`}
             >
@@ -149,7 +161,7 @@ const Navbar = () => {
             </button>
             <button
               onClick={() => navigate('/login')}
-              className="bg-spotify-base text-black font-extrabold text-sm px-6 py-2 rounded-full hover:scale-105 transition-transform shadow-md"
+              className="bg-spotify-base text-black font-extrabold text-xs sm:text-sm px-4 py-1.5 sm:px-6 sm:py-2 rounded-full hover:scale-105 transition-transform shadow-md"
             >
               Log in
             </button>

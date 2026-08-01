@@ -125,30 +125,30 @@ const Home = () => {
   const subTextColor = theme === 'light' ? 'text-emerald-800 font-medium' : 'text-gray-400';
 
   return (
-    <div className="p-8 pb-36 flex flex-col justify-between min-h-full animate-fade-in-up">
+    <div className="p-4 sm:p-8 pb-36 flex flex-col justify-between min-h-full animate-fade-in-up">
       <div>
         {/* Header Greeting with Logged-in User Name */}
-        <h2 className={`text-3xl font-black mb-6 tracking-tight ${textColor}`}>
+        <h2 className={`text-2xl sm:text-3xl font-black mb-4 sm:mb-6 tracking-tight ${textColor}`}>
           {getGreeting()}
         </h2>
 
         {/* Quick Mix Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-10">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mb-8 sm:mb-10">
           {quickMixes.map((mix, i) => (
             <div
               key={i}
               onClick={() => handleOpenPlaylist(mix.query)}
-              className={`${quickMixBg} h-16 rounded-xl flex items-center gap-4 cursor-pointer overflow-hidden group relative pr-3`}
+              className={`${quickMixBg} h-14 sm:h-16 rounded-xl flex items-center gap-2 sm:gap-4 cursor-pointer overflow-hidden group relative pr-2 sm:pr-3`}
             >
               <img
                 src={moviePosters[mix.imgKey]}
                 alt={mix.title}
-                className="h-16 w-16 object-cover flex-shrink-0 shadow-md group-hover:scale-105 transition-transform duration-300"
+                className="h-14 w-14 sm:h-16 sm:w-16 object-cover flex-shrink-0 shadow-md group-hover:scale-105 transition-transform duration-300"
               />
-              <span className={`font-black truncate text-sm flex-1 ${textColor}`}>{mix.title}</span>
+              <span className={`font-black truncate text-xs sm:text-sm flex-1 ${textColor}`}>{mix.title}</span>
               <button
                 onClick={(e) => handleQuickPlay(e, mix.query)}
-                className="w-9 h-9 bg-spotify-base hover:bg-spotify-highlight text-black rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-xl flex-shrink-0 hover:scale-110"
+                className="w-8 h-8 sm:w-9 sm:h-9 bg-spotify-base hover:bg-spotify-highlight text-black rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-xl flex-shrink-0 hover:scale-110 hidden sm:flex"
                 title="Quick Play"
               >
                 <Play size={18} fill="black" className="text-black ml-0.5" />
@@ -158,9 +158,9 @@ const Home = () => {
         </div>
 
         {/* SECTION 1: SEPARATE MOVIE ALBUMS */}
-        <div className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className={`text-2xl font-bold tracking-tight flex items-center gap-2 ${textColor}`}>
+        <div className="mb-10 sm:mb-12">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <h2 className={`text-xl sm:text-2xl font-bold tracking-tight flex items-center gap-2 ${textColor}`}>
               <span>🎬</span> Popular Movie Albums & Soundtracks
             </h2>
             <button
@@ -172,14 +172,14 @@ const Home = () => {
               Show all
             </button>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
             {movieAlbums.map((item, i) => (
               <div
                 key={i}
                 onClick={() => handleOpenPlaylist(item.query)}
-                className={`${cardBg} p-4 rounded-xl cursor-pointer group`}
+                className={`${cardBg} p-3 sm:p-4 rounded-xl cursor-pointer group`}
               >
-                <div className="relative mb-4 pb-[100%] rounded-lg overflow-hidden shadow-md bg-gray-200">
+                <div className="relative mb-3 sm:mb-4 pb-[100%] rounded-lg overflow-hidden shadow-md bg-gray-200">
                   <img
                     src={moviePosters[item.imgKey]}
                     alt={item.name}
@@ -187,23 +187,23 @@ const Home = () => {
                   />
                   <button
                     onClick={(e) => handleQuickPlay(e, item.query)}
-                    className="absolute bottom-2 right-2 w-12 h-12 bg-spotify-base hover:bg-spotify-highlight rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 transition-all duration-300 shadow-xl hover:scale-110 z-10"
+                    className="absolute bottom-2 right-2 w-10 h-10 sm:w-12 sm:h-12 bg-spotify-base hover:bg-spotify-highlight rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 transition-all duration-300 shadow-xl hover:scale-110 z-10"
                     title="Play Album"
                   >
                     <Play size={20} fill="black" className="text-black ml-0.5" />
                   </button>
                 </div>
-                <h3 className={`font-bold mb-1 truncate text-sm ${textColor}`}>{item.name}</h3>
-                <p className={`text-xs line-clamp-2 ${subTextColor}`}>{item.desc}</p>
+                <h3 className={`font-bold mb-1 truncate text-xs sm:text-sm ${textColor}`}>{item.name}</h3>
+                <p className={`text-[11px] sm:text-xs line-clamp-2 ${subTextColor}`}>{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* SECTION 2: SEPARATE SINGERS & ARTISTS */}
-        <div className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className={`text-2xl font-bold tracking-tight flex items-center gap-2 ${textColor}`}>
+        <div className="mb-10 sm:mb-12">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <h2 className={`text-xl sm:text-2xl font-bold tracking-tight flex items-center gap-2 ${textColor}`}>
               <span>🎤</span> Top Singers & Artist Mixes
             </h2>
             <button
@@ -215,14 +215,14 @@ const Home = () => {
               Show all
             </button>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
             {topSingers.map((artist) => (
               <div
                 key={artist.name}
                 onClick={() => handleOpenPlaylist(artist.query)}
-                className={`${cardBg} p-5 rounded-xl cursor-pointer group flex flex-col items-center text-center`}
+                className={`${cardBg} p-3.5 sm:p-5 rounded-xl cursor-pointer group flex flex-col items-center text-center`}
               >
-                <div className="w-36 h-36 mb-4 relative rounded-full overflow-hidden shadow-xl ring-2 ring-spotify-base/30 group-hover:ring-spotify-base transition-all">
+                <div className="w-24 h-24 sm:w-36 sm:h-36 mb-3 sm:mb-4 relative rounded-full overflow-hidden shadow-xl ring-2 ring-spotify-base/30 group-hover:ring-spotify-base transition-all">
                   <img
                     src={moviePosters[artist.imgKey]}
                     alt={artist.name}
@@ -230,23 +230,23 @@ const Home = () => {
                   />
                   <button
                     onClick={(e) => handleQuickPlay(e, artist.query)}
-                    className="absolute bottom-2 right-2 w-10 h-10 bg-spotify-base rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-xl hover:scale-110"
+                    className="absolute bottom-2 right-2 w-8 h-8 sm:w-10 sm:h-10 bg-spotify-base rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-xl hover:scale-110"
                     title="Play Artist Mix"
                   >
-                    <Play size={18} fill="black" className="text-black ml-0.5" />
+                    <Play size={16} fill="black" className="text-black ml-0.5" />
                   </button>
                 </div>
-                <h3 className={`font-bold text-lg mb-1 ${textColor}`}>{artist.name}</h3>
-                <span className="text-spotify-base text-xs font-bold">{artist.role}</span>
+                <h3 className={`font-bold text-sm sm:text-lg mb-0.5 sm:mb-1 ${textColor}`}>{artist.name}</h3>
+                <span className="text-spotify-base text-[11px] sm:text-xs font-bold">{artist.role}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* SECTION 3: SEPARATE SONG CATEGORIES & MOODS */}
-        <div className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className={`text-2xl font-bold tracking-tight flex items-center gap-2 ${textColor}`}>
+        <div className="mb-10 sm:mb-12">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <h2 className={`text-xl sm:text-2xl font-bold tracking-tight flex items-center gap-2 ${textColor}`}>
               <span>💖</span> Song Categories & Genres
             </h2>
             <button
@@ -258,14 +258,14 @@ const Home = () => {
               Show all
             </button>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
             {songCategories.map((item, i) => (
               <div
                 key={i}
                 onClick={() => handleOpenPlaylist(item.query)}
-                className={`${cardBg} p-4 rounded-xl cursor-pointer group`}
+                className={`${cardBg} p-3 sm:p-4 rounded-xl cursor-pointer group`}
               >
-                <div className="relative mb-4 pb-[100%] rounded-lg overflow-hidden shadow-lg bg-gray-200">
+                <div className="relative mb-3 sm:mb-4 pb-[100%] rounded-lg overflow-hidden shadow-lg bg-gray-200">
                   <img
                     src={moviePosters[item.imgKey]}
                     alt={item.name}
@@ -273,14 +273,14 @@ const Home = () => {
                   />
                   <button
                     onClick={(e) => handleQuickPlay(e, item.query)}
-                    className="absolute bottom-2 right-2 w-12 h-12 bg-spotify-base hover:bg-spotify-highlight rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 transition-all duration-300 shadow-xl hover:scale-110 z-10"
+                    className="absolute bottom-2 right-2 w-10 h-10 sm:w-12 sm:h-12 bg-spotify-base hover:bg-spotify-highlight rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 transition-all duration-300 shadow-xl hover:scale-110 z-10"
                     title="Play Category"
                   >
                     <Play size={20} fill="black" className="text-black ml-0.5" />
                   </button>
                 </div>
-                <h3 className={`font-bold mb-1 truncate text-sm ${textColor}`}>{item.name}</h3>
-                <p className={`text-xs line-clamp-2 ${subTextColor}`}>{item.desc}</p>
+                <h3 className={`font-bold mb-1 truncate text-xs sm:text-sm ${textColor}`}>{item.name}</h3>
+                <p className={`text-[11px] sm:text-xs line-clamp-2 ${subTextColor}`}>{item.desc}</p>
               </div>
             ))}
           </div>
@@ -288,34 +288,34 @@ const Home = () => {
       </div>
 
       {/* Website Footer Credit - Centered at Bottom with Clickable Links */}
-      <footer className={`mt-16 pt-8 pb-8 border-t flex flex-col items-center justify-center text-center gap-5 ${theme === 'light' ? 'border-emerald-200' : 'border-[#282828]'}`}>
+      <footer className={`mt-12 sm:mt-16 pt-6 sm:pt-8 pb-8 border-t flex flex-col items-center justify-center text-center gap-4 sm:gap-5 ${theme === 'light' ? 'border-emerald-200' : 'border-[#282828]'}`}>
         {/* Big Creator Name Badge Centered */}
-        <div className={`flex items-center gap-3 px-8 py-3.5 rounded-3xl shadow-xl border transition-all hover:scale-105 ${
+        <div className={`flex items-center gap-2 sm:gap-3 px-5 sm:px-8 py-2.5 sm:py-3.5 rounded-3xl shadow-xl border transition-all hover:scale-105 ${
           theme === 'light'
             ? 'bg-gradient-to-r from-emerald-100 via-green-50 to-emerald-100 border-emerald-300 text-slate-900'
             : 'bg-gradient-to-r from-[#181818] via-[#222222] to-[#181818] border-white/10 text-white'
         }`}>
-          <span className="text-sm sm:text-base font-extrabold text-gray-300">Made with</span>
-          <Heart size={26} fill="#1db954" className="text-spotify-base animate-pulse flex-shrink-0" />
-          <span className="text-sm sm:text-base font-extrabold text-gray-300">by</span>
-          <span className="text-2xl sm:text-3xl font-black tracking-wide text-spotify-base drop-shadow-md">
+          <span className="text-xs sm:text-base font-extrabold text-gray-300">Made with</span>
+          <Heart size={22} fill="#1db954" className="text-spotify-base animate-pulse flex-shrink-0" />
+          <span className="text-xs sm:text-base font-extrabold text-gray-300">by</span>
+          <span className="text-lg sm:text-3xl font-black tracking-wide text-spotify-base drop-shadow-md">
             Shubham Gaonkar
           </span>
         </div>
 
         {/* Clickable Social & Portfolio Link Badges */}
-        <div className="flex flex-wrap items-center justify-center gap-3 max-w-2xl px-4">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 max-w-2xl px-4">
           <a
             href="https://shubham-gaonkar-portfolio.netlify.app/"
             target="_blank"
             rel="noopener noreferrer"
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-extrabold transition-all duration-300 shadow-md hover:scale-105 ${
+            className={`flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs font-extrabold transition-all duration-300 shadow-md hover:scale-105 ${
               theme === 'light'
                 ? 'bg-emerald-100 text-emerald-950 hover:bg-emerald-200 border border-emerald-300'
                 : 'bg-[#242424] text-white hover:bg-[#323232] border border-white/10 hover:border-spotify-base'
             }`}
           >
-            <Globe size={16} className="text-spotify-base" />
+            <Globe size={14} className="text-spotify-base" />
             <span>Portfolio</span>
           </a>
 
@@ -323,13 +323,13 @@ const Home = () => {
             href="https://www.linkedin.com/in/shubhamgaonkar2005/"
             target="_blank"
             rel="noopener noreferrer"
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-extrabold transition-all duration-300 shadow-md hover:scale-105 ${
+            className={`flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs font-extrabold transition-all duration-300 shadow-md hover:scale-105 ${
               theme === 'light'
                 ? 'bg-emerald-100 text-emerald-950 hover:bg-emerald-200 border border-emerald-300'
-                : 'bg-[#242424] text-white hover:bg-[#323232] border border-white/10 hover:border-spotify-base'
+                : 'bg-[#242424] text-white hover:bg-[#323232] border border-emerald-300'
             }`}
           >
-            <Linkedin size={16} className="text-[#0a66c2]" />
+            <Linkedin size={14} className="text-[#0a66c2]" />
             <span>LinkedIn</span>
           </a>
 
@@ -337,32 +337,32 @@ const Home = () => {
             href="https://github.com/ShubhamGaonkar02"
             target="_blank"
             rel="noopener noreferrer"
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-extrabold transition-all duration-300 shadow-md hover:scale-105 ${
+            className={`flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs font-extrabold transition-all duration-300 shadow-md hover:scale-105 ${
               theme === 'light'
                 ? 'bg-emerald-100 text-emerald-950 hover:bg-emerald-200 border border-emerald-300'
                 : 'bg-[#242424] text-white hover:bg-[#323232] border border-white/10 hover:border-spotify-base'
             }`}
           >
-            <Github size={16} className="text-white" />
+            <Github size={14} className="text-white" />
             <span>GitHub</span>
           </a>
 
           <a
             href="mailto:shubhamgaonkar2005@gmail.com"
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-extrabold transition-all duration-300 shadow-md hover:scale-105 ${
+            className={`flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs font-extrabold transition-all duration-300 shadow-md hover:scale-105 ${
               theme === 'light'
                 ? 'bg-emerald-100 text-emerald-950 hover:bg-emerald-200 border border-emerald-300'
                 : 'bg-[#242424] text-white hover:bg-[#323232] border border-white/10 hover:border-spotify-base'
             }`}
           >
-            <Mail size={16} className="text-rose-400" />
-            <span>shubhamgaonkar2005@gmail.com</span>
+            <Mail size={14} className="text-rose-400" />
+            <span className="truncate max-w-[180px] sm:max-w-none">shubhamgaonkar2005@gmail.com</span>
           </a>
         </div>
 
-        <div className="flex items-center gap-2 text-xs font-bold mt-1">
-          <span className="text-spotify-base font-black text-sm">Shubify – Ad-Free Music Player</span>
-          <span>•</span>
+        <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 text-[11px] sm:text-xs font-bold mt-1">
+          <span className="text-spotify-base font-black">Shubify – Ad-Free Music Player</span>
+          <span className="hidden sm:inline">•</span>
           <span className={subTextColor}>© 2026 All rights reserved</span>
         </div>
       </footer>

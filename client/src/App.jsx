@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import MusicPlayer from './components/MusicPlayer';
+import MobileBottomNav from './components/MobileBottomNav';
 import Home from './pages/Home';
 import Search from './pages/Search';
 import Login from './pages/Login';
@@ -41,19 +42,19 @@ function App() {
                 <Navigate to="/login" replace />
               ) : (
                 <>
-                  {/* Left Sidebar */}
+                  {/* Left Sidebar (Desktop Only) */}
                   <Sidebar />
 
-                  {/* Center Main Panel */}
+                  {/* Center Main Panel (Full Width on Mobile) */}
                   <div
-                    className={`flex-1 overflow-y-auto rounded-xl my-2 mr-2 relative custom-scrollbar transition-all ${
+                    className={`flex-1 overflow-y-auto rounded-none md:rounded-xl my-0 md:my-2 mr-0 md:mr-2 relative custom-scrollbar transition-all ${
                       theme === 'light'
                         ? 'bg-white text-slate-900 shadow-sm border border-emerald-200/80'
                         : 'bg-[#121212] text-white'
                     }`}
                   >
                     <Navbar />
-                    <div className="pb-24">
+                    <div className="pb-36">
                       <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/search" element={<Search />} />
@@ -65,9 +66,9 @@ function App() {
                     </div>
                   </div>
 
-                  {/* Bottom Player Bar */}
+                  {/* Bottom Music Player Bar */}
                   <div
-                    className={`fixed bottom-0 w-full h-[90px] border-t z-50 transition-colors ${
+                    className={`fixed bottom-16 md:bottom-0 left-0 right-0 h-[65px] md:h-[90px] border-t z-40 transition-colors ${
                       theme === 'light'
                         ? 'bg-white border-slate-200 text-slate-900 shadow-md'
                         : 'bg-black border-[#282828] text-white'
@@ -75,6 +76,9 @@ function App() {
                   >
                     <MusicPlayer />
                   </div>
+
+                  {/* Mobile Bottom Navigation Bar */}
+                  <MobileBottomNav />
                 </>
               )
             }

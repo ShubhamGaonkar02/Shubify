@@ -104,15 +104,17 @@ const MusicPlayer = () => {
   const playerBg =
     theme === 'light'
       ? 'bg-white text-gray-900 border-t border-gray-200 shadow-2xl'
-      : 'bg-black text-white border-t border-white/10';
+      : 'bg-[#121212] text-white border-t border-white/10';
   const textColor = theme === 'light' ? 'text-gray-900' : 'text-white';
   const subTextColor = theme === 'light' ? 'text-gray-500' : 'text-gray-400';
   const controlBtnColor = theme === 'light' ? 'text-gray-600 hover:text-black' : 'text-gray-400 hover:text-white';
 
   if (!currentTrack) {
     return (
-      <div className={`h-full flex items-center justify-between px-6 ${subTextColor} ${playerBg}`}>
-        <div className="text-sm font-semibold">Search and click any song to start playing</div>
+      <div className={`h-full flex items-center justify-center px-4 ${subTextColor} ${playerBg}`}>
+        <div className="text-xs sm:text-sm font-semibold truncate text-center">
+          Search and click any song to start playing
+        </div>
       </div>
     );
   }
@@ -150,26 +152,26 @@ const MusicPlayer = () => {
           <div className="flex items-center justify-between w-full max-w-4xl mx-auto">
             <button
               onClick={() => setIsExpanded(false)}
-              className="p-3 rounded-full bg-white/10 hover:bg-white/20 transition-all hover:scale-110 flex items-center gap-1 font-bold text-xs"
+              className="p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 transition-all hover:scale-110 flex items-center gap-1 font-bold text-xs"
               title="Collapse Player"
             >
-              <ChevronDown size={24} />
+              <ChevronDown size={20} />
               <span>Minimize</span>
             </button>
             <div className="text-center">
-              <span className="text-xs font-black uppercase tracking-widest text-spotify-base">
+              <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-spotify-base">
                 Now Playing from Shubify
               </span>
-              <p className="text-sm font-bold text-gray-300 truncate max-w-xs md:max-w-md">
+              <p className="text-xs sm:text-sm font-bold text-gray-300 truncate max-w-[160px] sm:max-w-xs md:max-w-md">
                 {currentTrack.album?.name || 'Bollywood Hits'}
               </p>
             </div>
             <button
               onClick={() => toggleLikeTrack(currentTrack)}
-              className="p-3 rounded-full bg-white/10 hover:bg-white/20 transition-all hover:scale-110"
+              className="p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 transition-all hover:scale-110"
             >
               <Heart
-                size={24}
+                size={22}
                 fill={isLiked(currentTrack?.id) ? '#1db954' : 'none'}
                 className={isLiked(currentTrack?.id) ? 'text-spotify-base animate-pulse' : 'text-white'}
               />
@@ -177,29 +179,29 @@ const MusicPlayer = () => {
           </div>
 
           {/* Large Spinning Vinyl Art Center */}
-          <div className="flex flex-col items-center justify-center my-6 max-w-4xl mx-auto w-full">
-            <div className="relative mb-8">
+          <div className="flex flex-col items-center justify-center my-4 sm:my-6 max-w-4xl mx-auto w-full">
+            <div className="relative mb-6 sm:mb-8">
               <div
-                className={`w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-full shadow-2xl overflow-hidden relative ring-8 ring-spotify-base/30 transition-transform ${
+                className={`w-52 h-52 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-full shadow-2xl overflow-hidden relative ring-8 ring-spotify-base/30 transition-transform ${
                   isPlaying ? 'animate-spin-slow ring-spotify-base/60' : 'ring-white/10'
                 }`}
               >
                 <img src={albumArt} alt={currentTrack.name} className="w-full h-full object-cover rounded-full" />
                 {/* Vinyl Center Spindle */}
-                <div className="absolute inset-0 m-auto w-12 h-12 bg-black rounded-full border-4 border-white/40 shadow-2xl flex items-center justify-center pointer-events-none">
-                  <div className="w-4 h-4 bg-spotify-base rounded-full" />
+                <div className="absolute inset-0 m-auto w-10 h-10 sm:w-12 sm:h-12 bg-black rounded-full border-4 border-white/40 shadow-2xl flex items-center justify-center pointer-events-none">
+                  <div className="w-3 h-3 sm:w-4 sm:h-4 bg-spotify-base rounded-full" />
                 </div>
               </div>
             </div>
 
             {/* Song Title & Equalizer */}
-            <div className="text-center max-w-lg">
-              <div className="flex items-center justify-center gap-3">
-                <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white line-clamp-1">
+            <div className="text-center max-w-lg px-4">
+              <div className="flex items-center justify-center gap-2 sm:gap-3">
+                <h1 className="text-xl sm:text-4xl font-black tracking-tight text-white line-clamp-1">
                   {currentTrack.name}
                 </h1>
                 {isPlaying && (
-                  <div className="flex items-end gap-1 h-6 flex-shrink-0">
+                  <div className="flex items-end gap-1 h-5 sm:h-6 flex-shrink-0">
                     <span className="w-1 bg-spotify-base rounded-full equalizer-bar-1" />
                     <span className="w-1 bg-spotify-base rounded-full equalizer-bar-2" />
                     <span className="w-1 bg-spotify-base rounded-full equalizer-bar-3" />
@@ -207,16 +209,16 @@ const MusicPlayer = () => {
                   </div>
                 )}
               </div>
-              <p className="text-base sm:text-lg text-spotify-base font-extrabold mt-1 truncate">
+              <p className="text-sm sm:text-lg text-spotify-base font-extrabold mt-1 truncate">
                 {currentTrack.artists?.map((a) => a.name).join(', ')}
               </p>
             </div>
           </div>
 
           {/* Timeline & Controls */}
-          <div className="w-full max-w-3xl mx-auto flex flex-col gap-6">
+          <div className="w-full max-w-3xl mx-auto flex flex-col gap-4 sm:gap-6">
             {/* Timeline Bar */}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1.5">
               <div className="relative w-full h-2 group flex items-center cursor-pointer">
                 <input
                   type="range"
@@ -244,27 +246,27 @@ const MusicPlayer = () => {
               </div>
             </div>
 
-            {/* Playback Controls (Cleaned: Previous, Play/Pause, Next) */}
-            <div className="flex items-center justify-center gap-10 px-6">
+            {/* Playback Controls (Previous, Play/Pause, Next) */}
+            <div className="flex items-center justify-center gap-8 sm:gap-10 px-4">
               <button
                 onClick={playPrevious}
                 className="text-white hover:text-spotify-base transition-all hover:scale-125"
                 title="Previous"
               >
-                <SkipBack size={32} fill="currentColor" />
+                <SkipBack size={28} fill="currentColor" />
               </button>
 
               <button
                 onClick={() => setIsPlaying(!isPlaying)}
-                className="w-16 h-16 bg-spotify-base hover:bg-spotify-highlight text-black rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all"
+                className="w-14 h-14 sm:w-16 sm:h-16 bg-spotify-base hover:bg-spotify-highlight text-black rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all"
                 title={isPlaying ? 'Pause' : 'Play'}
               >
                 {isLoading ? (
-                  <Loader2 size={30} className="animate-spin text-black" />
+                  <Loader2 size={26} className="animate-spin text-black" />
                 ) : isPlaying ? (
-                  <Pause size={30} fill="black" className="text-black" />
+                  <Pause size={26} fill="black" className="text-black" />
                 ) : (
-                  <Play size={30} fill="black" className="text-black ml-1" />
+                  <Play size={26} fill="black" className="text-black ml-1" />
                 )}
               </button>
 
@@ -273,13 +275,13 @@ const MusicPlayer = () => {
                 className="text-white hover:text-spotify-base transition-all hover:scale-125"
                 title="Next"
               >
-                <SkipForward size={32} fill="currentColor" />
+                <SkipForward size={28} fill="currentColor" />
               </button>
             </div>
 
             {/* Volume Control */}
-            <div className="flex items-center justify-center gap-3 max-w-xs mx-auto w-full pt-2">
-              <Volume2 size={20} className="text-gray-400" />
+            <div className="flex items-center justify-center gap-3 max-w-xs mx-auto w-full pt-1">
+              <Volume2 size={18} className="text-gray-400" />
               <div className="relative w-full h-1.5 flex items-center cursor-pointer">
                 <input
                   type="range"
@@ -299,63 +301,62 @@ const MusicPlayer = () => {
         </div>
       )}
 
-      {/* MINI PLAYER BAR (BOTTOM STICKY BAR WITH TOP CENTER EXPAND BUTTON) */}
-      <div className={`h-full flex items-center justify-between px-4 relative ${playerBg}`}>
+      {/* MINI PLAYER BAR */}
+      <div className={`h-full flex items-center justify-between px-3 md:px-4 relative ${playerBg}`}>
         {/* CENTERED TOP EXPAND DRAG HANDLE BUTTON */}
         <button
           onClick={() => setIsExpanded(true)}
-          className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-spotify-base hover:bg-spotify-highlight text-black text-xs font-black px-4 py-0.5 rounded-full shadow-xl border border-black/20 flex items-center gap-1.5 hover:scale-110 transition-all z-20 group"
+          className="absolute -top-3 left-1/2 -translate-x-1/2 bg-spotify-base hover:bg-spotify-highlight text-black text-[10px] sm:text-xs font-black px-3 sm:px-4 py-0.5 rounded-full shadow-xl border border-black/20 flex items-center gap-1 hover:scale-110 transition-all z-20"
           title="Click to Drag Up / View Full Screen Now Playing"
         >
-          <ChevronUp size={14} className="animate-bounce" />
+          <ChevronUp size={12} className="animate-bounce" />
           <span>EXPAND</span>
-          <ChevronUp size={14} className="animate-bounce" />
+          <ChevronUp size={12} className="animate-bounce" />
         </button>
 
-        {/* Left: Track Info & Expand Handle */}
-        <div className="flex items-center gap-4 w-1/3 min-w-[200px]">
+        {/* Left: Track Info & Artwork */}
+        <div className="flex items-center gap-2.5 sm:gap-4 flex-1 md:w-1/3 min-w-0 pr-2">
           <div
             onClick={() => setIsExpanded(true)}
-            className={`w-14 h-14 bg-[#282828] flex-shrink-0 rounded-full shadow-lg overflow-hidden relative group cursor-pointer transition-transform hover:scale-105 ${
+            className={`w-11 h-11 sm:w-14 sm:h-14 bg-[#282828] flex-shrink-0 rounded-full shadow-lg overflow-hidden relative group cursor-pointer transition-transform hover:scale-105 ${
               isPlaying ? 'ring-2 ring-spotify-base animate-spin-slow' : 'ring-1 ring-white/20'
             }`}
             title="Click to view full screen Now Playing"
           >
             <img src={albumArt} alt={currentTrack.name} className="w-full h-full object-cover rounded-full" />
-            <div className="absolute inset-0 m-auto w-3 h-3 bg-black rounded-full border border-white/40 shadow-inner pointer-events-none" />
+            <div className="absolute inset-0 m-auto w-2.5 h-2.5 sm:w-3 sm:h-3 bg-black rounded-full border border-white/40 shadow-inner pointer-events-none" />
             {isLoading && (
               <div className="absolute inset-0 bg-black/60 flex items-center justify-center rounded-full">
-                <Loader2 className="w-5 h-5 text-spotify-base animate-spin" />
+                <Loader2 className="w-4 h-4 text-spotify-base animate-spin" />
               </div>
             )}
           </div>
 
-          <div className="flex flex-col justify-center max-w-[180px]">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col justify-center min-w-0 flex-1">
+            <div className="flex items-center gap-1.5 min-w-0">
               <span
                 onClick={() => setIsExpanded(true)}
-                className={`text-sm font-extrabold hover:underline line-clamp-1 cursor-pointer ${textColor}`}
+                className={`text-xs sm:text-sm font-extrabold hover:underline truncate cursor-pointer ${textColor}`}
                 title="Click to view full screen Now Playing"
               >
                 {currentTrack.name}
               </span>
               {isPlaying && (
-                <div className="flex items-end gap-0.5 h-4 flex-shrink-0 mb-0.5">
+                <div className="hidden sm:flex items-end gap-0.5 h-3.5 flex-shrink-0 mb-0.5">
                   <span className="w-0.5 bg-spotify-base rounded-full equalizer-bar-1" />
                   <span className="w-0.5 bg-spotify-base rounded-full equalizer-bar-2" />
                   <span className="w-0.5 bg-spotify-base rounded-full equalizer-bar-3" />
-                  <span className="w-0.5 bg-spotify-base rounded-full equalizer-bar-4" />
                 </div>
               )}
             </div>
-            <span className={`text-xs hover:underline line-clamp-1 cursor-pointer ${subTextColor}`}>
+            <span className={`text-[11px] sm:text-xs hover:underline truncate cursor-pointer ${subTextColor}`}>
               {currentTrack.artists?.map((a) => a.name).join(', ')}
             </span>
           </div>
 
           <button
             onClick={() => toggleLikeTrack(currentTrack)}
-            className={`ml-2 transition-transform hover:scale-125 ${
+            className={`transition-transform hover:scale-125 flex-shrink-0 ${
               isLiked(currentTrack?.id) ? 'text-spotify-base' : `${subTextColor} hover:${textColor}`
             }`}
             title={isLiked(currentTrack?.id) ? 'Remove from Liked Songs' : 'Save to Liked Songs'}
@@ -368,35 +369,35 @@ const MusicPlayer = () => {
           </button>
         </div>
 
-        {/* Center: Controls & Progress Bar */}
-        <div className="flex flex-col items-center justify-center w-1/3 max-w-[722px]">
-          <div className="flex items-center gap-6 mb-1">
-            <button onClick={playPrevious} className={`${controlBtnColor} transition-all hover:scale-110`} title="Previous">
-              <SkipBack size={20} fill="currentColor" />
+        {/* Center: Playback Controls */}
+        <div className="flex flex-col items-center justify-center flex-shrink-0 md:w-1/3">
+          <div className="flex items-center gap-3 sm:gap-6">
+            <button onClick={playPrevious} className={`${controlBtnColor} transition-all hover:scale-110 hidden sm:block`} title="Previous">
+              <SkipBack size={18} fill="currentColor" />
             </button>
 
             <button
-              className="w-9 h-9 flex items-center justify-center rounded-full hover:scale-110 transition-all shadow-lg bg-spotify-base text-black hover:bg-spotify-highlight"
+              className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full hover:scale-110 transition-all shadow-lg bg-spotify-base text-black hover:bg-spotify-highlight"
               onClick={() => setIsPlaying(!isPlaying)}
               title={isPlaying ? 'Pause' : 'Play'}
             >
               {isLoading ? (
-                <Loader2 size={18} className="animate-spin text-black" />
+                <Loader2 size={16} className="animate-spin text-black" />
               ) : isPlaying ? (
-                <Pause size={18} fill="black" className="text-black" />
+                <Pause size={16} fill="black" className="text-black" />
               ) : (
-                <Play size={18} fill="black" className="text-black ml-0.5" />
+                <Play size={16} fill="black" className="text-black ml-0.5" />
               )}
             </button>
 
             <button onClick={playNext} className={`${controlBtnColor} transition-all hover:scale-110`} title="Next">
-              <SkipForward size={20} fill="currentColor" />
+              <SkipForward size={18} fill="currentColor" />
             </button>
           </div>
 
-          {/* Progress Bar */}
-          <div className="flex items-center gap-2 w-full max-w-[500px]">
-            <span className={`text-xs min-w-[40px] text-right font-semibold ${subTextColor}`}>
+          {/* Progress Bar (Desktop / Tablet) */}
+          <div className="hidden md:flex items-center gap-2 w-full max-w-[450px] mt-1">
+            <span className={`text-[10px] min-w-[32px] text-right font-semibold ${subTextColor}`}>
               {formatTime(duration * played)}
             </span>
 
@@ -416,19 +417,15 @@ const MusicPlayer = () => {
                   style={{ width: `${played * 100}%` }}
                 />
               </div>
-              <div
-                className="absolute h-3.5 w-3.5 bg-spotify-base rounded-full opacity-0 group-hover:opacity-100 shadow-md pointer-events-none transition-opacity"
-                style={{ left: `calc(${played * 100}% - 7px)` }}
-              />
             </div>
 
-            <span className={`text-xs min-w-[40px] font-semibold ${subTextColor}`}>{formatTime(duration)}</span>
+            <span className={`text-[10px] min-w-[32px] font-semibold ${subTextColor}`}>{formatTime(duration)}</span>
           </div>
         </div>
 
-        {/* Right: Volume & Expand Full Screen Button */}
-        <div className="flex items-center justify-end gap-4 w-1/3 min-w-[200px]">
-          <div className="flex items-center gap-2 w-24 group relative">
+        {/* Right: Volume & Expand Full Screen Button (Desktop) */}
+        <div className="hidden md:flex items-center justify-end gap-4 w-1/3 min-w-[180px]">
+          <div className="flex items-center gap-2 w-20 group relative">
             <button className={`${controlBtnColor} transition-colors`} title="Volume">
               <Volume2 size={16} />
             </button>
@@ -439,9 +436,9 @@ const MusicPlayer = () => {
               step="0.01"
               value={volume}
               onChange={handleVolumeChange}
-              className="absolute right-0 w-16 h-1 opacity-0 cursor-pointer z-10"
+              className="absolute right-0 w-14 h-1 opacity-0 cursor-pointer z-10"
             />
-            <div className={`w-16 h-1 rounded-full overflow-hidden ${theme === 'light' ? 'bg-gray-300' : 'bg-[#4d4d4d]'}`}>
+            <div className={`w-14 h-1 rounded-full overflow-hidden ${theme === 'light' ? 'bg-gray-300' : 'bg-[#4d4d4d]'}`}>
               <div
                 className="h-full bg-spotify-base"
                 style={{ width: `${volume * 100}%` }}
