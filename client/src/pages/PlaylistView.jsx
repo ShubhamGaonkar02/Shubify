@@ -268,21 +268,23 @@ const PlaylistView = () => {
             </button>
           )}
 
-          {/* Share Playlist Button */}
-          <button
-            onClick={handleSharePlaylist}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-black transition-all hover:scale-105 shadow-md border ${
-              copied
-                ? 'bg-spotify-base text-black border-spotify-base'
-                : theme === 'light'
-                ? 'bg-slate-100 hover:bg-slate-200 text-slate-900 border-slate-300'
-                : 'bg-white/10 hover:bg-white/20 text-white border-white/10'
-            }`}
-            title="Share Playlist"
-          >
-            {copied ? <Check size={16} /> : <Share2 size={16} />}
-            <span>{copied ? 'Link Copied!' : 'Share Playlist'}</span>
-          </button>
+          {/* Share Playlist Button (Rendered ONLY for default playlists & movie albums, NOT for user custom playlists) */}
+          {!meta.isCustom && (
+            <button
+              onClick={handleSharePlaylist}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-black transition-all hover:scale-105 shadow-md border ${
+                copied
+                  ? 'bg-spotify-base text-black border-spotify-base'
+                  : theme === 'light'
+                  ? 'bg-slate-100 hover:bg-slate-200 text-slate-900 border-slate-300'
+                  : 'bg-white/10 hover:bg-white/20 text-white border-white/10'
+              }`}
+              title="Share Playlist"
+            >
+              {copied ? <Check size={16} /> : <Share2 size={16} />}
+              <span>{copied ? 'Link Copied!' : 'Share Playlist'}</span>
+            </button>
+          )}
         </div>
 
         {meta.isCustom && (
@@ -369,7 +371,7 @@ const PlaylistView = () => {
                         <div className="flex flex-col truncate">
                           <span
                             className={`text-sm truncate ${
-                              isCurrent ? 'text-spotify-base font-extrabold' : songTitleColor
+                              isCurrent ? 'text-[#1db954] font-extrabold' : songTitleColor
                             }`}
                           >
                             {track.name}
