@@ -24,17 +24,19 @@ const Login = () => {
     e.preventDefault();
     setError(null);
 
+    const cleanEmail = email.trim().toLowerCase();
+
     if (mode === 'signup') {
       if (password !== confirmPassword) {
         setError('Passwords do not match. Please try again.');
         return;
       }
-      const res = await signUpWithEmail(email, password, displayName);
+      const res = await signUpWithEmail(cleanEmail, password, displayName);
       if (res.success) {
         navigate('/');
       }
     } else {
-      const res = await loginWithEmail(email, password);
+      const res = await loginWithEmail(cleanEmail, password);
       if (res.success) {
         navigate('/');
       }
@@ -131,6 +133,9 @@ const Login = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@example.com"
                 required
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck="false"
                 className="w-full bg-[#1c1c20] border border-white/10 rounded-2xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-spotify-base transition-colors"
               />
             </div>

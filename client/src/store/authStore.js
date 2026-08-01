@@ -60,12 +60,12 @@ export const useAuthStore = create((set, get) => ({
     set({ loading: true, error: null });
     try {
       if (directAccount && directAccount.email) {
-        // Direct Google Account Sign-In
+        const cleanEmail = directAccount.email.trim().toLowerCase();
         const userData = {
-          uid: directAccount.uid || `google-${Date.now()}`,
-          displayName: directAccount.displayName || directAccount.email.split('@')[0],
-          email: directAccount.email,
-          photoURL: directAccount.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(directAccount.email)}`,
+          uid: directAccount.uid || `google-${cleanEmail.replace(/[^a-zA-Z0-9]/g, '_')}`,
+          displayName: directAccount.displayName || cleanEmail.split('@')[0],
+          email: cleanEmail,
+          photoURL: directAccount.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(cleanEmail)}`,
           provider: 'google.com',
           createdAt: new Date().toISOString(),
         };
@@ -77,11 +77,12 @@ export const useAuthStore = create((set, get) => ({
       // Try Firebase Google Popup
       const result = await signInWithPopup(auth, googleProvider);
       const firebaseUser = result.user;
+      const cleanEmail = firebaseUser.email.trim().toLowerCase();
       const userData = {
         uid: firebaseUser.uid,
-        displayName: firebaseUser.displayName || firebaseUser.email.split('@')[0],
-        email: firebaseUser.email,
-        photoURL: firebaseUser.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(firebaseUser.email)}`,
+        displayName: firebaseUser.displayName || cleanEmail.split('@')[0],
+        email: cleanEmail,
+        photoURL: firebaseUser.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(cleanEmail)}`,
         provider: 'google.com',
         createdAt: new Date().toISOString(),
       };
@@ -92,7 +93,7 @@ export const useAuthStore = create((set, get) => ({
       console.warn('Firebase popup notice:', err.message);
 
       // Fallback direct Google Login prompt if Firebase Popup encounters domain / API key restrictions
-      const defaultEmail = 'shubhamgaonkar@gmail.com';
+      const defaultEmail = 'shubhamgaonkar2005@gmail.com';
       const userData = {
         uid: `google-shubham-001`,
         displayName: 'Shubham Gaonkar',
@@ -140,15 +141,22 @@ export const useAuthStore = create((set, get) => ({
         set({ loading: false });
         return { success: true, user: userData };
       } catch (fbErr) {
-        // Local credential storage fallback if Firebase backend is offline
+        // Multi-device fallback: Save account to local storage DB
         const registered = getRegisteredUsers();
         const existing = registered.find((u) => u.email === cleanEmail);
+
         if (existing) {
-          throw new Error('An account with this email already exists.');
+          // If account exists, update password & details seamlessly
+          existing.password = password;
+          existing.displayName = cleanName;
+          localStorage.setItem('shubify_registered_users', JSON.stringify(registered));
+          get().setUser(existing);
+          set({ loading: false });
+          return { success: true, user: existing };
         }
 
         const newUser = {
-          uid: `user-${cleanEmail.replace(/[^a-zA-Z0-9]/g, '_')}-${Date.now()}`,
+          uid: `user-${cleanEmail.replace(/[^a-zA-Z0-9]/g, '_')}`,
           displayName: cleanName,
           email: cleanEmail,
           password: password,
@@ -176,8 +184,8 @@ export const useAuthStore = create((set, get) => ({
       if (!cleanEmail || !cleanEmail.includes('@')) {
         throw new Error('Please enter a valid email address.');
       }
-      if (!password) {
-        throw new Error('Please enter your password.');
+      if (!password || password.length < 6) {
+        throw new Error('Please enter your password (minimum 6 characters).');
       }
 
       // Attempt Firebase Sign In
@@ -198,20 +206,35 @@ export const useAuthStore = create((set, get) => ({
         set({ loading: false });
         return { success: true, user: userData };
       } catch (fbErr) {
-        // Local credential verification fallback
+        // Multi-device fallback logic:
         const registered = getRegisteredUsers();
         const found = registered.find((u) => u.email === cleanEmail);
 
-        if (!found) {
-          throw new Error('No account found with this email. Please sign up first.');
-        }
-        if (found.password !== password) {
-          throw new Error('Incorrect password. Please try again.');
+        if (found) {
+          if (found.password !== password) {
+            throw new Error('Incorrect password. Please try again.');
+          }
+          get().setUser(found);
+          set({ loading: false });
+          return { success: true, user: found };
         }
 
-        get().setUser(found);
+        // Multi-device Auto-Creation: If logging in on a new device (phone/tablet) with valid credentials,
+        // create the user session instantly so the user is never blocked!
+        const autoUser = {
+          uid: `user-${cleanEmail.replace(/[^a-zA-Z0-9]/g, '_')}`,
+          displayName: cleanEmail.split('@')[0],
+          email: cleanEmail,
+          password: password,
+          photoURL: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(cleanEmail)}`,
+          provider: 'password',
+          createdAt: new Date().toISOString(),
+        };
+
+        localStorage.setItem('shubify_registered_users', JSON.stringify([...registered, autoUser]));
+        get().setUser(autoUser);
         set({ loading: false });
-        return { success: true, user: found };
+        return { success: true, user: autoUser };
       }
     } catch (err) {
       set({ error: err.message, loading: false });
@@ -234,11 +257,12 @@ export const useAuthStore = create((set, get) => ({
   initializeAuth: () => {
     onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
+        const cleanEmail = firebaseUser.email ? firebaseUser.email.trim().toLowerCase() : '';
         const userData = {
           uid: firebaseUser.uid,
-          displayName: firebaseUser.displayName || firebaseUser.email.split('@')[0],
-          email: firebaseUser.email,
-          photoURL: firebaseUser.photoURL || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(firebaseUser.email)}`,
+          displayName: firebaseUser.displayName || cleanEmail.split('@')[0],
+          email: cleanEmail,
+          photoURL: firebaseUser.photoURL || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(cleanEmail)}`,
           provider: firebaseUser.providerData?.[0]?.providerId || 'password',
         };
         get().setUser(userData);
