@@ -141,18 +141,12 @@ export const useAuthStore = create((set, get) => ({
         set({ loading: false });
         return { success: true, user: userData };
       } catch (fbErr) {
-        // Multi-device fallback: Save account to local storage DB
+        // Local credential storage fallback
         const registered = getRegisteredUsers();
         const existing = registered.find((u) => u.email === cleanEmail);
 
         if (existing) {
-          // If account exists, update password & details seamlessly
-          existing.password = password;
-          existing.displayName = cleanName;
-          localStorage.setItem('shubify_registered_users', JSON.stringify(registered));
-          get().setUser(existing);
-          set({ loading: false });
-          return { success: true, user: existing };
+          throw new Error('An account with this email already exists. Please log in.');
         }
 
         const newUser = {
@@ -176,7 +170,7 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  // 3. Login with Email & Password
+  // 3. Login with Email & Password (Strict account verification)
   loginWithEmail: async (email, password) => {
     set({ loading: true, error: null });
     try {
@@ -184,8 +178,8 @@ export const useAuthStore = create((set, get) => ({
       if (!cleanEmail || !cleanEmail.includes('@')) {
         throw new Error('Please enter a valid email address.');
       }
-      if (!password || password.length < 6) {
-        throw new Error('Please enter your password (minimum 6 characters).');
+      if (!password) {
+        throw new Error('Please enter your password.');
       }
 
       // Attempt Firebase Sign In
@@ -206,35 +200,20 @@ export const useAuthStore = create((set, get) => ({
         set({ loading: false });
         return { success: true, user: userData };
       } catch (fbErr) {
-        // Multi-device fallback logic:
+        // Local credential verification
         const registered = getRegisteredUsers();
         const found = registered.find((u) => u.email === cleanEmail);
 
-        if (found) {
-          if (found.password !== password) {
-            throw new Error('Incorrect password. Please try again.');
-          }
-          get().setUser(found);
-          set({ loading: false });
-          return { success: true, user: found };
+        if (!found) {
+          throw new Error('No account found with this email. Please sign up first.');
+        }
+        if (found.password !== password) {
+          throw new Error('Incorrect password. Please try again.');
         }
 
-        // Multi-device Auto-Creation: If logging in on a new device (phone/tablet) with valid credentials,
-        // create the user session instantly so the user is never blocked!
-        const autoUser = {
-          uid: `user-${cleanEmail.replace(/[^a-zA-Z0-9]/g, '_')}`,
-          displayName: cleanEmail.split('@')[0],
-          email: cleanEmail,
-          password: password,
-          photoURL: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(cleanEmail)}`,
-          provider: 'password',
-          createdAt: new Date().toISOString(),
-        };
-
-        localStorage.setItem('shubify_registered_users', JSON.stringify([...registered, autoUser]));
-        get().setUser(autoUser);
+        get().setUser(found);
         set({ loading: false });
-        return { success: true, user: autoUser };
+        return { success: true, user: found };
       }
     } catch (err) {
       set({ error: err.message, loading: false });
