@@ -232,6 +232,50 @@ export const useAuthStore = create((set, get) => ({
     set({ error: null });
   },
 
+  // 5. Delete Account
+  deleteAccount: async () => {
+    set({ loading: true, error: null });
+    try {
+      const currentUser = get().user;
+      if (!currentUser) return { success: false, error: 'No user logged in' };
+
+      const userId = currentUser.uid || currentUser.email;
+
+      // Attempt Firebase User Deletion
+      if (auth.currentUser) {
+        try {
+          await auth.currentUser.delete();
+        } catch (fbErr) {
+          // Ignore if reauthentication required
+        }
+      }
+
+      // Remove from local registered users database
+      if (currentUser.email) {
+        const cleanEmail = currentUser.email.trim().toLowerCase();
+        const registered = getRegisteredUsers();
+        const updatedRegistered = registered.filter((u) => u.email !== cleanEmail);
+        localStorage.setItem('shubify_registered_users', JSON.stringify(updatedRegistered));
+      }
+
+      // Clear user-isolated playlists and liked songs
+      localStorage.removeItem(`liked_songs_${userId}`);
+      localStorage.removeItem(`custom_playlists_${userId}`);
+
+      try {
+        await signOut(auth);
+      } catch (err) {}
+
+      get().setUser(null);
+      set({ loading: false });
+
+      return { success: true };
+    } catch (err) {
+      set({ error: err.message, loading: false });
+      return { success: false, error: err.message };
+    }
+  },
+
   // 5. Initialize Auth Listener & Session Persistence
   initializeAuth: () => {
     onAuthStateChanged(auth, (firebaseUser) => {
