@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Sun, Moon, LogOut, ShieldCheck, ChevronDown } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Sun, Moon, LogOut, ShieldCheck, ChevronDown, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { usePlayerStore } from '../store/playerStore';
 import { useAuthStore } from '../store/authStore';
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { theme, toggleTheme } = usePlayerStore();
+  const { theme, toggleTheme, openCreatePlaylistModal } = usePlayerStore();
   const { user, logout } = useAuthStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -78,6 +78,18 @@ const Navbar = () => {
       </div>
 
       <div className="flex items-center gap-2 sm:gap-4">
+        {/* Mobile Create Playlist Button */}
+        {user && (
+          <button
+            onClick={openCreatePlaylistModal}
+            className="flex md:hidden items-center gap-1 bg-spotify-base hover:bg-spotify-highlight text-black font-extrabold text-xs px-3 py-1.5 rounded-full shadow hover:scale-105 transition-all"
+            title="Create New Playlist"
+          >
+            <Plus size={15} />
+            <span>Create</span>
+          </button>
+        )}
+
         {/* Light / Dark Mode Toggle Button */}
         <button
           onClick={toggleTheme}

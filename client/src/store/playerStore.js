@@ -58,6 +58,11 @@ export const usePlayerStore = create((set, get) => ({
   isShuffle: false,
   isRepeat: false,
 
+  // Create Playlist Modal State
+  isCreatePlaylistOpen: false,
+  openCreatePlaylistModal: () => set({ isCreatePlaylistOpen: true }),
+  closeCreatePlaylistModal: () => set({ isCreatePlaylistOpen: false }),
+
   // Theme State (dark vs light)
   theme: localStorage.getItem('shubify_theme') || 'dark',
   toggleTheme: () => {

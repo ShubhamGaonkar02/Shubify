@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import MusicPlayer from './components/MusicPlayer';
 import MobileBottomNav from './components/MobileBottomNav';
+import CreatePlaylistModal from './components/CreatePlaylistModal';
 import Home from './pages/Home';
 import Search from './pages/Search';
 import Login from './pages/Login';
@@ -15,7 +16,7 @@ import { usePlayerStore } from './store/playerStore';
 import { useAuthStore } from './store/authStore';
 
 function App() {
-  const { theme } = usePlayerStore();
+  const { theme, isCreatePlaylistOpen, closeCreatePlaylistModal } = usePlayerStore();
   const { user, initializeAuth } = useAuthStore();
 
   useEffect(() => {
@@ -79,6 +80,12 @@ function App() {
 
                   {/* Mobile Bottom Navigation Bar */}
                   <MobileBottomNav />
+
+                  {/* Global Create Playlist Modal (Works on Mobile & Desktop) */}
+                  <CreatePlaylistModal
+                    isOpen={isCreatePlaylistOpen}
+                    onClose={closeCreatePlaylistModal}
+                  />
                 </>
               )
             }
